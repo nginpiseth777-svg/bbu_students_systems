@@ -1,0 +1,135 @@
+{% extends 'students/base.html' %}
+{% load static %}
+
+{% block title %}កែប្រែព័ត៌មានសិស្ស{% endblock %}
+
+{% block content %}
+<div class="profile-edit-page">
+    <div class="row g-4 align-items-stretch">
+        <div class="col-lg-4">
+            <aside class="profile-edit-sidebar">
+                <span class="profile-sidebar-kicker"><i class="fa-solid fa-sparkles"></i> STUDENT PROFILE</span>
+                <div class="profile-summary-avatar" data-profile-photo-preview>
+                    {% if student.profile_picture %}
+                        <img src="{{ student.profile_picture.url }}" alt="រូបថត {{ student.get_primary_name }}">
+                    {% else %}
+                        <span>{{ student.get_primary_name|slice:":1" }}</span>
+                    {% endif %}
+                </div>
+                <h1>កែប្រែព័ត៌មាននិស្សិត</h1>
+                <p>រក្សាព័ត៌មានផ្ទាល់ខ្លួនឲ្យត្រឹមត្រូវ និងទាន់សម័យ។</p>
+
+                <div class="profile-summary-card">
+                    <span>អត្តលេខនិស្សិត</span>
+                    <strong>{{ student.student_id }}</strong>
+                </div>
+                <div class="profile-summary-card">
+                    <span>ស្ថានភាពគណនី</span>
+                    {% if student.is_active %}
+                        <strong class="profile-account-status"><i></i> កំពុងសិក្សា</strong>
+                    {% else %}
+                        <strong class="profile-account-status profile-account-inactive"><i></i> មិនបានសិក្សា</strong>
+                    {% endif %}
+                </div>
+
+                <div class="profile-sidebar-note">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>ព័ត៌មានរបស់អ្នកត្រូវបានរក្សាទុកក្នុងប្រព័ន្ធ BBU។</span>
+                </div>
+            </aside>
+        </div>
+
+        <div class="col-lg-8">
+            <section class="profile-form-card">
+                <header class="profile-form-header">
+                    <div>
+                        <span class="profile-form-kicker">PROFILE SETTINGS</span>
+                        <h2><i class="fa-regular fa-pen-to-square"></i> ព័ត៌មានគណនី</h2>
+                        <p>កែប្រែព័ត៌មានខាងក្រោម រួចចុចរក្សាទុក។</p>
+                    </div>
+                    <span class="profile-edit-badge"><i class="fa-solid fa-circle-check"></i> ការកែប្រែ</span>
+                </header>
+
+                <form method="post" enctype="multipart/form-data" class="profile-edit-form">
+                    {% csrf_token %}
+                    {% if student_form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">{{ student_form.non_field_errors }}</div>
+                    {% endif %}
+                    {% if user_form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">{{ user_form.non_field_errors }}</div>
+                    {% endif %}
+
+                    <section class="profile-form-section">
+                        <div class="profile-section-heading">
+                            <span class="profile-section-number">01</span>
+                            <div>
+                                <h3>ព័ត៌មាននិស្សិត</h3>
+                                <p>ព័ត៌មានផ្ទាល់ខ្លួន និងទំនាក់ទំនង</p>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            {% for field in student_form %}
+                                {% if field.name != 'profile_picture' %}
+                                    <div class="col-md-6">
+                                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}{% if field.field.required %}<span class="required-mark"> *</span>{% endif %}</label>
+                                        {{ field }}
+                                        {% if field.errors %}<div class="field-error">{{ field.errors|striptags }}</div>{% endif %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </section>
+
+                    <section class="profile-form-section">
+                        <div class="profile-section-heading">
+                            <span class="profile-section-number profile-section-number-blue">02</span>
+                            <div>
+                                <h3>គណនីអ្នកប្រើប្រាស់</h3>
+                                <p>ឈ្មោះ និងអាសយដ្ឋានអ៊ីមែល</p>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            {% for field in user_form %}
+                                <div class="col-md-6">
+                                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}{% if field.field.required %}<span class="required-mark"> *</span>{% endif %}</label>
+                                    {{ field }}
+                                    {% if field.errors %}<div class="field-error">{{ field.errors|striptags }}</div>{% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </section>
+
+                    <section class="profile-photo-section">
+                        <div>
+                            <h3>រូបថតប្រវត្តិរូប</h3>
+                            <p>ជ្រើសរើសរូបភាពថ្មី ប្រសិនបើចង់ប្ដូរ។</p>
+                            {{ student_form.profile_picture }}
+                            {% if student_form.profile_picture.errors %}
+                                <div class="field-error">{{ student_form.profile_picture.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="profile-photo-preview" data-profile-photo-preview>
+                            {% if student.profile_picture %}
+                                <img src="{{ student.profile_picture.url }}" alt="រូបថតប្រវត្តិរូប">
+                            {% else %}
+                                <span>{{ student.get_primary_name|slice:":1" }}</span>
+                            {% endif %}
+                        </div>
+                    </section>
+
+                    <div class="profile-form-actions">
+                        <a href="{% url 'students:student_detail' student.pk %}" class="profile-cancel-button">បោះបង់</a>
+                        <button type="submit" class="profile-save-button">
+                            <i class="fa-solid fa-floppy-disk me-2"></i>រក្សាទុកការកែប្រែ
+                        </button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/student-profile-preview.js' %}?v=20261121-profile-photo" defer></script>
+{% endblock %}

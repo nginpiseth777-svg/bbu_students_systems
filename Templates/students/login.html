@@ -1,0 +1,33 @@
+{% extends 'students/base.html' %}
+{% load static %}
+
+{% block title %}ចូលគណនី (Login){% endblock %}
+
+{% block content %}
+<div class="row justify-content-center login-page">
+    <div class="col-sm-10 col-md-7 col-lg-5">
+        <div class="card login-card shadow p-4">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4 text-primary">🔐 ចូលប្រើប្រាស់ប្រព័ន្ធ</h3>
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next|default:'' }}">
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary w-100 mt-3">ចូល (Login)</button>
+                </form>
+                <p class="text-center mt-3 mb-0">
+                    មិនទាន់មានគណនី?
+                    <a href="{% url 'students:register' %}">បង្កើតគណនីនិស្សិត</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

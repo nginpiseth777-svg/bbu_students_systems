@@ -1,0 +1,202 @@
+{% extends 'students/base.html' %}
+{% load static %}
+
+{% block title %}ផ្ទាំងគ្រប់គ្រង | BBU{% endblock %}
+
+{% block content %}
+<div class="student-dashboard">
+    <div class="dashboard-glow" aria-hidden="true"></div>
+<section class="dashboard-hero mb-4">
+    <div class="hero-ambient" aria-hidden="true">
+        <span class="ambient-ring"></span>
+        <span class="ambient-orb ambient-orb-one"></span>
+        <span class="ambient-orb ambient-orb-two"></span>
+        <span class="ambient-orb ambient-orb-three"></span>
+    </div>
+    <div class="dashboard-hero-content">
+        <div class="dashboard-eyebrow"><span class="hero-pulse"></span> BBU · ប្រព័ន្ធនិស្សិត</div>
+        <h1>ផ្ទាំងគ្រប់គ្រងនិស្សិត</h1>
+        <p>ទិដ្ឋភាពរួមនៃនិស្សិត និងព័ត៌មានសិក្សារបស់អ្នក នៅកន្លែងតែមួយ។</p>
+        <a href="{% url 'students:register' %}" class="btn btn-hero">
+            <i class="fa-solid fa-plus me-2"></i>ចុះឈ្មោះនិស្សិតថ្មី
+        </a>
+    </div>
+</section>
+
+<section class="dashboard-section mb-4" aria-labelledby="overview-title">
+    <div class="section-heading">
+        <div>
+            <span class="section-kicker">សង្ខេប</span>
+            <h2 id="overview-title">ស្ថិតិទូទៅ</h2>
+        </div>
+        <span class="live-indicator"><span></span> ទិន្នន័យបច្ចុប្បន្ន</span>
+    </div>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="metric-card metric-blue">
+            <div class="metric-icon"><i class="fa-solid fa-users"></i></div>
+            <div class="metric-copy">
+                <span>និស្សិតសរុប</span>
+                <strong>{{ student_stats.total|default:0 }}</strong>
+                <small>ចំនួនក្នុងប្រព័ន្ធទាំងអស់</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="metric-card metric-green">
+            <div class="metric-icon"><i class="fa-solid fa-user-check"></i></div>
+            <div class="metric-copy">
+                <span>និស្សិតកំពុងសិក្សា</span>
+                <strong>{{ student_stats.active|default:0 }}</strong>
+                <small>គណនីដែលកំពុងដំណើរការ</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="metric-card metric-violet">
+            <div class="metric-icon"><i class="fa-solid fa-chart-line"></i></div>
+            <div class="metric-copy">
+                <span>GPA មធ្យម</span>
+                <strong>{{ student_stats.average_gpa|default_if_none:"0"|floatformat:2 }}</strong>
+                <small>ពិន្ទុជាមធ្យមតាមទិន្នន័យបច្ចុប្បន្ន</small>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+<section class="directory-card" aria-labelledby="directory-title">
+    <div class="directory-heading">
+        <div>
+            <span class="section-kicker">គ្រប់គ្រងព័ត៌មាន</span>
+            <h2 id="directory-title">បញ្ជីនិស្សិត</h2>
+            <p>ស្វែងរក និងគ្រប់គ្រងព័ត៌មាននិស្សិតរបស់អ្នក។</p>
+        </div>
+        <span class="record-count"><i class="fa-solid fa-address-book me-2"></i>{{ students.paginator.count|default:0 }} នាក់</span>
+    </div>
+
+    <form
+        method="get"
+        class="directory-search mb-3"
+        autocomplete="off"
+        data-student-autocomplete
+        data-suggestions-url="{% url 'students:student_suggestions' %}"
+    >
+        <label class="search-field" for="student-search-input">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input
+                id="student-search-input"
+                type="search"
+                name="q"
+                placeholder="ស្វែងរកតាមឈ្មោះ អត្តលេខ ឬឈ្មោះគណនី..."
+                value="{{ search_query }}"
+                aria-label="ស្វែងរកនិស្សិត"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-controls="student-search-suggestions"
+            >
+        </label>
+        <button type="submit" class="btn btn-search">ស្វែងរក</button>
+        {% if search_query %}
+            <a href="{% url 'students:student_list' %}" class="btn btn-clear">សម្អាត</a>
+        {% endif %}
+    </form>
+
+    <div
+        id="student-search-suggestions"
+        class="student-search-suggestions"
+        role="listbox"
+        aria-label="ឈ្មោះនិស្សិតដែលត្រូវគ្នា"
+        aria-live="polite"
+        hidden
+    ></div>
+
+    <div class="table-responsive">
+        <table class="table directory-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>និស្សិត</th>
+                    <th>អត្តលេខ</th>
+                    <th>ឈ្មោះជាភាសាអង់គ្លេស</th>
+                    <th>GPA</th>
+                    <th>ស្ថានភាព</th>
+                    <th class="text-end">សកម្មភាព</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>
+                        <div class="student-cell">
+                            {% if student.profile_picture %}
+                                <img src="{{ student.profile_picture.url }}" alt="" class="student-avatar">
+                            {% else %}
+                                <span class="student-avatar student-avatar-placeholder">{{ student.get_primary_name|slice:":1" }}</span>
+                            {% endif %}
+                            <span class="student-name">{{ student.khmer_name|default:student.user.get_full_name|default:student.user.username }}</span>
+                        </div>
+                    </td>
+                    <td><span class="student-id">{{ student.student_id }}</span></td>
+                    <td class="muted-cell">{{ student.user.get_full_name|default:student.user.username }}</td>
+                    <td><span class="gpa-pill">{{ student.gpa|floatformat:2 }}</span></td>
+                    <td>
+                        {% if student.is_active %}
+                            <span class="status-pill status-active"><span></span>កំពុងសិក្សា</span>
+                        {% else %}
+                            <span class="status-pill status-inactive"><span></span>មិនបានសិក្សា</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="row-actions">
+                            <a href="{% url 'students:student_detail' student.pk %}" class="icon-action" aria-label="មើលព័ត៌មាន {{ student.student_id }}" title="មើលព័ត៌មាន">
+                                <i class="fa-regular fa-eye"></i>
+                            </a>
+                            <a href="{% url 'students:student_update' student.pk %}" class="icon-action" aria-label="កែប្រែ {{ student.student_id }}" title="កែប្រែ">
+                                <i class="fa-regular fa-pen-to-square"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <span><i class="fa-regular fa-folder-open"></i></span>
+                            <strong>មិនមានទិន្នន័យនិស្សិតទេ</strong>
+                            <p>សូមសាកល្បងស្វែងរកម្ដងទៀត ឬចុះឈ្មោះនិស្សិតថ្មី។</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if students.has_other_pages %}
+    <nav class="directory-pagination" aria-label="ទំព័របញ្ជីនិស្សិត">
+        <span>ទំព័រ {{ students.number }} នៃ {{ students.paginator.num_pages }}</span>
+        <div class="d-flex gap-2">
+            {% if students.has_previous %}
+                <a class="pagination-link" href="?{% if search_query %}q={{ search_query|urlencode }}&amp;{% endif %}page={{ students.previous_page_number }}">
+                    <i class="fa-solid fa-arrow-left me-1"></i> មុន
+                </a>
+            {% endif %}
+            {% if students.has_next %}
+                <a class="pagination-link" href="?{% if search_query %}q={{ search_query|urlencode }}&amp;{% endif %}page={{ students.next_page_number }}">
+                    បន្ទាប់ <i class="fa-solid fa-arrow-right ms-1"></i>
+                </a>
+            {% endif %}
+        </div>
+    </nav>
+    {% endif %}
+</section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/dashboard.js' %}?v=20261121-dashboard" defer></script>
+<script src="{% static 'js/student-search.js' %}?v=20261126-name-suggestions" defer></script>
+{% endblock %}

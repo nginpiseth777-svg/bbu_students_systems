@@ -1,0 +1,107 @@
+{% extends 'students/base.html' %}
+{% load static %}
+
+{% block title %}ចុះឈ្មោះសិស្សថ្មី{% endblock %}
+
+{% block content %}
+<div class="registration-page">
+    <div class="registration-glow registration-glow-one" aria-hidden="true"></div>
+    <div class="registration-glow registration-glow-two" aria-hidden="true"></div>
+
+    <div class="row g-4 align-items-stretch registration-layout">
+        <div class="col-lg-4">
+            <aside class="registration-intro">
+                <div class="registration-brand">
+                    <span class="registration-brand-icon"><i class="fa-solid fa-graduation-cap"></i></span>
+                    <span>BBU <b>STUDENT PORTAL</b></span>
+                </div>
+                <span class="registration-kicker">ចាប់ផ្តើមថ្ងៃនេះ</span>
+                <h1>ចាប់ផ្តើម<br>ដំណើរសិក្សា<br>របស់អ្នក។</h1>
+                <p>បង្កើតគណនីនិស្សិត ហើយរក្សាទុកព័ត៌មានសិក្សា និងទំនាក់ទំនងរបស់អ្នកនៅកន្លែងតែមួយ។</p>
+
+                <div class="registration-benefits">
+                    <div><i class="fa-solid fa-shield-halved"></i><span>ព័ត៌មានគណនីមានសុវត្ថិភាព</span></div>
+                    <div><i class="fa-solid fa-bolt"></i><span>បំពេញព័ត៌មានបានរហ័ស</span></div>
+                    <div><i class="fa-solid fa-book-open"></i><span>ងាយស្រួលគ្រប់គ្រងប្រវត្តិសិក្សា</span></div>
+                </div>
+
+                <div class="registration-art" aria-hidden="true">
+                    <span class="registration-art-orbit"></span>
+                    <span class="registration-art-glass"><i class="fa-solid fa-user-graduate"></i></span>
+                    <span class="registration-art-star"><i class="fa-solid fa-sparkles"></i></span>
+                </div>
+                <div class="registration-footer-note">LEARN · GROW · ACHIEVE</div>
+            </aside>
+        </div>
+
+        <div class="col-lg-8">
+            <section class="registration-card">
+                <header class="registration-header">
+                    <div>
+                        <span class="registration-form-kicker">STUDENT ENROLLMENT</span>
+                        <h2><i class="fa-solid fa-pen-to-square"></i> ចុះឈ្មោះនិស្សិត</h2>
+                        <p>បំពេញព័ត៌មានខាងក្រោម ដើម្បីបង្កើតគណនីថ្មី។</p>
+                    </div>
+                    <span class="registration-step"><i class="fa-solid fa-circle-check"></i> ចុះឈ្មោះថ្មី</span>
+                </header>
+
+                <form method="post" enctype="multipart/form-data" class="registration-form">
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>
+                    {% endif %}
+
+                    <div class="form-section">
+                        <div class="form-section-heading">
+                            <span class="form-section-number">01</span>
+                            <div>
+                                <h3>ព័ត៌មានគណនី</h3>
+                                <p>ព័ត៌មានសម្រាប់ចូលប្រើប្រព័ន្ធ</p>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            {% for field in form %}
+                                {% if field.name in 'username first_name last_name email password1 password2' %}
+                                    <div class="col-md-6">
+                                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}{% if field.field.required %}<span class="required-mark"> *</span>{% endif %}</label>
+                                        {{ field }}
+                                        {% if field.errors %}<div class="field-error">{{ field.errors|striptags }}</div>{% endif %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-heading">
+                            <span class="form-section-number form-section-number-teal">02</span>
+                            <div>
+                                <h3>ព័ត៌មាននិស្សិត</h3>
+                                <p>ព័ត៌មានផ្ទាល់ខ្លួន និងទំនាក់ទំនង</p>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            {% for field in form %}
+                                {% if field.name in 'student_id khmer_name date_of_birth gender phone_number address city country' %}
+                                    <div class="col-md-6">
+                                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}{% if field.field.required %}<span class="required-mark"> *</span>{% endif %}</label>
+                                        {{ field }}
+                                        {% if field.errors %}<div class="field-error">{{ field.errors|striptags }}</div>{% endif %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="registration-actions">
+                        <span><i class="fa-solid fa-lock"></i> ព័ត៌មានរបស់អ្នកត្រូវបានរក្សាទុកដោយសុវត្ថិភាព</span>
+                        <button type="submit" class="btn registration-submit">
+                            <i class="fa-solid fa-arrow-right-to-bracket me-2"></i>បង្កើតគណនី
+                        </button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}

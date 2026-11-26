@@ -1,0 +1,75 @@
+{% extends 'students/base.html' %}
+{% load static %}
+
+{% block title %}ព័ត៌មានលម្អិតរបស់និស្សិត{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center g-4">
+    <div class="col-lg-10">
+        <div class="hero-card d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 mb-4">
+            <div class="d-flex align-items-center gap-3">
+                {% if student.profile_picture %}
+                    <img src="{{ student.profile_picture.url }}" alt="Avatar" class="profile-avatar">
+                {% else %}
+                    <div class="profile-avatar d-inline-flex align-items-center justify-content-center text-white fw-bold fs-3" style="background: linear-gradient(135deg, #60a5fa, #0ea5e9);">
+                        {{ student.get_primary_name|slice:":1" }}
+                    </div>
+                {% endif %}
+                <div>
+                    <div class="badge-soft mb-2">Student profile</div>
+                    <h2 class="mb-1">{{ student.khmer_name|default:student.user.get_full_name }}</h2>
+                    <p>Student ID: <strong>{{ student.student_id }}</strong></p>
+                </div>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{% url 'students:student_list' %}" class="btn btn-light">Back</a>
+                <a href="{% url 'students:student_update' student.pk %}" class="btn btn-primary">Edit profile</a>
+            </div>
+        </div>
+
+        <div class="panel-card p-4 p-md-5">
+            <div class="detail-grid mb-4">
+                <div class="info-pill">
+                    <strong>Full name</strong>
+                    <span>{{ student.user.get_full_name|default:student.user.username }}</span>
+                </div>
+                <div class="info-pill">
+                    <strong>Email</strong>
+                    <span>{{ student.user.email|default:"-" }}</span>
+                </div>
+                <div class="info-pill">
+                    <strong>Phone</strong>
+                    <span>{{ student.phone_number|default:"-" }}</span>
+                </div>
+                <div class="info-pill">
+                    <strong>GPA</strong>
+                    <span class="badge bg-success rounded-pill">{{ student.gpa }}</span>
+                </div>
+                <div class="info-pill">
+                    <strong>City</strong>
+                    <span>{{ student.city|default:"-" }}</span>
+                </div>
+                <div class="info-pill">
+                    <strong>Country</strong>
+                    <span>{{ student.country|default:"Cambodia" }}</span>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="info-pill h-100">
+                        <strong>Address</strong>
+                        <span>{{ student.address|default:"-" }}</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="info-pill h-100">
+                        <strong>Birth date</strong>
+                        <span>{{ student.date_of_birth|date:"d M Y" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

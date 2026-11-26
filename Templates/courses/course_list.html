@@ -1,0 +1,39 @@
+{% extends 'students/base.html' %}
+{% load static %}
+
+{% block title %}បញ្ជីមុខវិជ្ជា (Course List){% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>🚀 គម្រោង និងមុខវិជ្ជា (Projects)</h2>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle bg-white shadow-sm rounded">
+        <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>កូដមុខវិជ្ជា</th>
+                <th>ឈ្មោះគម្រោង / មុខវិជ្ជា</th>
+                <th>ក្រេឌីត (Credits)</th>
+                <th>សាស្ត្រាចារ្យ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><strong>{{ course.code }}</strong></td>
+                <td><span class="text-primary fw-bold">{{ course.title }}</span></td>
+                <td>{{ course.credits }}</td>
+                <td>{{ course.instructor.get_full_name|default:course.instructor.username|default:"-" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center text-muted py-4">មិនមានទិន្នន័យគម្រោង ឬមុខវិជ្ជាទេ។</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

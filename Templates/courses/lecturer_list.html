@@ -1,0 +1,56 @@
+{% extends 'students/base.html' %}
+
+{% block title %}សាស្ត្រាចារ្យ | BBU{% endblock %}
+
+{% block content %}
+<section class="lecturer-page">
+    <header class="lecturer-page-heading">
+        <span class="section-kicker">BBU ACADEMIC COMMUNITY</span>
+        <h1>សាស្ត្រាចារ្យ - {{ campus_label }}</h1>
+        <p>ស្វែងរកសាស្ត្រាចារ្យ និងមុខវិជ្ជាដែលកំពុងបង្រៀនតាមសាខា។</p>
+        <form method="get" class="mt-3" aria-label="ជ្រើសរើសសាខា">
+            <label for="campus-filter" class="form-label">សាខា</label>
+            <select id="campus-filter" name="campus" class="form-select w-auto" onchange="this.form.submit()">
+                {% for value, label in campus_choices %}
+                    <option value="{{ value }}"{% if value == campus %} selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </header>
+
+    {% if contains_demo_data %}
+        <div class="alert alert-warning d-flex align-items-center mb-4" role="status">
+            <i class="fa-solid fa-circle-info me-2"></i>
+            ទិន្នន័យខាងក្រោមត្រូវបានដាក់ជាព្រឹត្តិការណ៍ Demo សម្រាប់បង្ហាញទម្រង់ UI។
+            មិនមែនឈ្មោះសាស្ត្រាចារ្យផ្លូវការរបស់ Build Bright University។
+        </div>
+    {% endif %}
+
+    <div class="row g-3">
+        {% for lecturer in lecturers %}
+            <div class="col-md-6 col-xl-4">
+                <article class="lecturer-card">
+                    <div class="lecturer-avatar"><i class="fa-solid fa-chalkboard-user"></i></div>
+                    <div class="lecturer-info">
+                        <h2>{{ lecturer.get_full_name|default:lecturer.username }}</h2>
+                        <span>{{ lecturer.course_count }} មុខវិជ្ជា</span>
+                    </div>
+                    <ul>
+                        {% for course in lecturer.courses_taught.all %}
+                            <li><span>{{ course.code }}</span> {{ course.title }}</li>
+                        {% endfor %}
+                    </ul>
+                </article>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="lecturer-empty">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <strong>មិនទាន់មានទិន្នន័យសាស្ត្រាចារ្យទេ</strong>
+                    <span>ព័ត៌មាននឹងបង្ហាញនៅពេលមានសាស្ត្រាចារ្យភ្ជាប់ជាមួយមុខវិជ្ជា។</span>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
